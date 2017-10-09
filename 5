@@ -1,0 +1,62 @@
+Announcements:
+- Canvas
+ - Quiz is due sunday 23:59
+- Project one due octobre 2 23:59:59
+ - Teach: 30 min intervals
+  - Program (Pending) - change from your file to given sample
+  - PDF (Pending)
+  - Kaltura (Pending)
+- CGEL
+ - Some of you need to visit Kelley main Office Rules
+- Aliases
+ - Posted
+- TA Office hours posted
+- Movie Reviews
+- Piaza
+- VHR
+___
+Questions:
+- Is there a way to know if an object would show up in the view so we won't render it?
+- Isn't it better to keep precious VRAM for textures and heavier things other than lists?
+___
+
+- Orthographic projection
+ - glOrtho(xl,xr,yb,yt,zn,zf)
+- Perspective projection
+ - glPerpective(fovy,aspect,zn,zf)
+
+- These define a viewing volume
+
+glMatrixMode(GL_MODELVIEW);
+glLoadidentity();
+___
+
+Arbitrary viewing
+
+- gluLookAt(ex,ey,ez, lx,ly,lz, ux,uy,uz);
+- eye, look at pozition, Up vector (what is camera orientation)
+___
+
+How to adjust the camera:
+- Set look at
+- Set up vector
+- Set eye x and y
+- find eye z: 
+ - DeltaE = H/(2tan(fovy/2))
+___
+
+Specifying Viewport:
+- measured in pixels
+- define window
+- define from upper left corner
+- There is a matrix stack
+ - you can push or pop matrix
+___
+Lists
+- nameOfList=glGenLists(1); // 1 identifier is given back
+- glNewList: make all the calls
+- glEndList: ends the list
+- glCallList(nameOfList); // pulls the information back from the memory
+___
+
+- 

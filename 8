@@ -1,0 +1,42 @@
+Assignment:
+- Camera looks a negative z
+- use glutPerspective()
+- push matrix and pop matrix
+- Do the transformations
+- scale and translate the the blades properly
+- rotate it to control it's spinning
+- take it a step at the time
+- Tell glut main loop to animate
+ - Global variable float Time
+ - define MS_IN_THE_ANIMATION_CYCLE
+ - int ms = glutGet(get_elapsed_time); //ms
+ - ms %= ms_in_the_animation_cycle
+ - Time = (float)ms / (float)ms_in_the_animation_cycle
+___
+
+Frame buffer continues:
+- Alpha: Transparency
+
+Z Buffer:
+- from 0(near plane) to FFFFFF (far plane)
+___
+
+Texture Mapping:
+- Texel -> Texture Pixel
+
+              T = 1
+       ____________________
+      |                    |
+      |                    |
+S = 0 |                    | S = 1
+      |                    |
+      |____________________|
+
+               T = 0
+
+- OBJ files can contain texture
+- Assign s and T to vertex
+- becareful where transition happens
+- becareful about patterns evenly transitioning
+
+

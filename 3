@@ -1,0 +1,78 @@
+Sample.cpp
+
+MC: Model Cordinets
+WC: World Cordinates
+EC: Eye Cordinates
+CC: Clip cordinates
+NDC: Normalization device cordinates
+SC: Screen Cordinates
+
+        ____________________         ______________
+- MC-> |Model Transformation| -WC-> |View Transform| -EC->
+       |____________________|       |______________|
+          _____________
+...-SC-> |Rasterization| -> -SC-> ...
+         |_____________|
+
+Rasterization is what keeps a raster of the image (Pixels)
+___
+
+Geometry and Topology:
+- Geometry: Shape
+ - Changes if number of points change
+- Topology: Is howgeometry is represented.
+ - changes if order of points change
+
+3D cordinets:
+- X goes right
+- Y goes up
+- Z come out: rigth handed 
+- Z go away : left handed
+
+Positive rotation:
+- right hand rule:
+ - Thumb lines up with axis, fingers curl in the direection of positive rotation
+
+Drawing:
+
+glColor3f(r,g,b); // set states: colors
+
+glBegin(GL_LINE_STRIP); // set state: what to do
+	glVertex3f(x0,y0,z0); // Give vertecies
+	glVertex3f(x1,y1,z1); //
+	glVertex3f(x2,y2,z2); //
+		.
+		.
+		.
+	glVertex3f(xn,yn,zn);
+glEnd();
+
+- easy but inefficient, It is Deprecated
+ - It is not recommended
+ - This suppresses and interrupts the processor to push in the values
+
+Topologies of openGL:
+- GL_POINTS
+- GL_LINE_LOOP
+- GL_LINES
+- GL_TRIANGLES
+- GL_LINE_STRIP
+- GL_TRIANGLE_STRIP
+- GL_TRIANGLE_FAN
+- GL_QUAD_STRIP
+- GL_QUADS
+- GL_POLYGON // inneficient
++ Order matters
+
+Polygon requirments:
+- Convex: A polugon is convex if you can pick any two points inside and the lines 
+  between the two does not cross the polygon (stays in the polygun)
+- Planer: 3 points lie in the same plane
++ It does not throw errors , good luck!
++ work around for convex: break it into more convex polygon
++                         Or use PolyPartition
++ If all polyguns are triangular, they are all forced (mathematically) to become plainer
+
+The grid:
+ Y = -k/ (x^2 + z^2)
+

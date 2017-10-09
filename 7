@@ -1,0 +1,76 @@
+Quiz:
+1-
+- MC -> Model Transform
+- WC -> where it lives in the world (View Transform)
+___
+
+2- Topology is in the begin call
+___
+
+3- Colors: Additive
+___
+
+4- order is backwards
+___
+
+5- Perspective -> realism
+
+___
+
+6- Orthographic ->
+___
+
+7- Viewport is a subregion of overal graphics view
+___
+
+8- Display list is a memory to be played back
+___
+
+9- radious * cos theta etc: 2D circle
+___
+
+10- Callback functions are event driven
+
+___
+
+Project 2:
+Description:
+- 
+- 
+
+Questions:
+- 
+- 
+___
+
+Items:
+- glutSwapBuffers();
+ - There are two frame buffers. Back and front. We draw into the back buffer.
+ - Image generated will be drawn  to back and swapped with the front
+ - They switch at frame rate
+ - At the end of Display callback we use swapbuffers so it switches back and front
+
+- GLUT_DOUBLE:
+ - 
+- GL_BACK
+ - 
+___
+
+HSV: Hue, Saturation, value
+- Hue is an angle on the color cone
+- Value is brightness, white to black
+- Saturation is the radious (from white to anu color)
+
+float hsv[3], rgb[3];
+HsvRgb(hsv,rgb);
+
+___
+
+- Front Buffer (Gets flashed to the monitor: Refresh)
+- Back Buffer (Get controlled by program: Update)
+- Depth Buffer
+
+FrameBuffer:
+- 8 bits of each color, 24 bits of colors per pixle
+- floating point color storage
+- 

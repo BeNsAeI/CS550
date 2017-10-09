@@ -1,0 +1,21 @@
+Lighting:
+- Lighting is perpendicular to the surface
+
+- per face is easy:
+ - n = (P1 - P0) x  (P2 - P0) // known as flat shade
+
+- per vertex is difficult
+ - equation of the shape could be used for normals
+ - smooth shading
+
+- glNormal3f(nx,ny,nz); // is the function to
+  - nx^2 + ny^2 + nz^2 = 1
+ - else
+  - use glEnable(GL_NORMALIZE); 
+
+- glShadeModel(GL_SMOOTH); smooth several per normal, flat 1 per side
+
+Opengl lightings:
+- Ambient = constant		// just normal light no shadow
+- diffuse = I * cos theta	// closer to source, brighter, theta: angle between vector to light and normal (vector dot product gives you a cosine)
+- Specular = I * cos^s theta	// spread of light (partial reflection). Heuristic where theta is angle between perfect reflector and eye, s is shininess

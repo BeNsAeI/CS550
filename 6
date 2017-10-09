@@ -1,0 +1,37 @@
+Graphics Programming tips:
+1. Define Constants
+2. Blank screen debugging
+3. Do everything step by step (use version control)
+
+___
+Questions:
+- 
+___
+
+GLUT (GL Utility Toolkit)
+- OpenGL was a strictly graphic API
+- GLUT encapsulates the openGL so you don't have to worry about OS exclusive calls
+
+- glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH); // store in frame buffer
+- glutWindowPosition(0,0); // pixels from top left
+- glutWindowSize(INIT_WINDOW_SIZE, );
+- MainWindow = glutCreateWindow()
+- glitSetWindowTitle()
+
+Event driven Callbacks:
+- glutSetWindow(MainWindow);
+- glutDisplayFunc(Display);
+- glutReshapeFunc(Size);
+- glutKeyboardFunc()Keyboard;
+- glutMouseFunc(mouse button);
+- colormenue = glutCreateMenu(); // you can add menues to menues
+- glutAddMenuEntry()
+- AND MANY MANY MORE
+
+Example:
+	void keyboard(unsigned char c, int x, int y){...}
+** Look this up Keyboard, mouse, menue and visibility
+
+Predefined Objects:
+- Wireframe or Solid
+- Teapot(!): a PhD student needed a test object.

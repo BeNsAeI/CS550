@@ -1,0 +1,48 @@
+More on texture:
+- Globe is easy to get SandT cordinates
+ - easy code to achieve
+- 
+___
+
+Project 3: distort the globe
+___
+
+- Don't forget to call the animate function
+
+- Texture = BmpToTexture("file.bmp",&width, &height); // needs to be a 24 -bits
+
+___
+
+Setting up Textures:
+
+- setting the wrapping constants:
+ - repeat (repeats after the T or S runs to 1 
+ - clamps (Keeps the last parameter for all the leftover pixels)
+
+- Setting the filters:
+ - nearest, maps to the closest possible texel (not recommended)
+ - linear interpolation (recomended)
+
+- Texture Environment modes:
+ - Replace: Like a sticker (decal)
+ - Modulate: allows color of the object shine throught the texture
+  - Using for lighting and texturing
+
+How to read the texture in:
+- glTextImage2D
+
+Texture Object:
+- all objects live in GPU memory
+- gluint tex0;
+- glGenTextures(1,&tex0);
+- glBindTexture(GL_TEXTURE_2D, tex0); // pushes the texture to GPU memory
+- glTextParametter
+- glEnvf
+- glTextImage2D
+
+Now in display:
+
+- bind: glBindTexture()
+- draw: glBegin
+
++ Disable features when you are not using it

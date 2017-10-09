@@ -1,0 +1,38 @@
+Questions of the day:
+Overal:
+- Masters students assignments/information/canvas (what applies to us)
+- Resume
+- The glut issue
+- masters guidance, directions advices
+Context:
+- Can we have transformations after introducing vertecies
+Assignment:
+- Solid body or wireframe?
+___
+
+- Orientation of objects can be used to detect cracks in model
+- Order implies how edges are created
+- Convexity is important for efficiency and optimization
+- GLUXxx turns non convex models to triangles and keeps it
+- PolyPartition too takes care of it and gives you an array of triangles
+- Planer matters cause we don't want to see both sides of object at the same time
+
+___
+Assignment:
+- Draw something in 3D
+- it needs atleast 100 x,y,z cordinates
+- 5 colors
+- 3D rotation and scaling
+___
+
+Transformations:
+- Translation: moving without changing orientation
+ - glTranslatef(tx, ty, tz);
+- Rotation: change orientation without moving
+ - glRotatef(degrees, ax, ay, az);
+- Scaling: change size scale representation multiplier
+ - glScalef(sx,sy,sz);
+ - uniform scaling implies all scale factors are the same
+ORDER MATTERS:
+- order happens reversal of appearance in code:
+- line happened: 3(2(1(verticies))) (first is processed last)
