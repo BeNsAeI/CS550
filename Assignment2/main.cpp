@@ -455,7 +455,7 @@ Display( )
 
 	glDisable( GL_DEPTH_TEST );
 	glColor3f( 1., 1., 1. );
-	DoRasterString( 0., 1., 0., "GDUNK GDUNK GDUNK GDUNK ..." );
+	DoRasterString( 0., 1., 0., "FADOO FADOO FADOO ..." );
 
 	
 	// draw some gratuitous text that is fixed on the screen:
