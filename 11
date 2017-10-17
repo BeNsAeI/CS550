@@ -1,0 +1,33 @@
+- Cross product is implemented on project 2 (heli.hpp)
+- dot product:
+ - gives you a scalar number |A|.|B|.cos theta
+ - gives us the cosine if both are unit vectors
+
+Shading:
+- multipass algorithm
+- imagine lightsource is an eye
+- everything that eye doesn't see is where light won't be and shadows will be casted
+
+Light sources:
+- Point
+- Directional
+- Spotlight
+
+- Colors could be calculated by multiplying
+
+Options:
+- Global scene ambient red, gree, blue
+- Position xyz
+- ambient rgb
+- diffuse rgb
+- specular rgb
+- material reaction to ambient
+- material reaction to diffuse
+- material reaction to specular
+- shininess
+
+- glLightModelfv(GL_LIGHT_MODEL_AMBIENT, MulArray3(.3f,white))
+- set ambient to 0
+
+- Helper functions:
+ - Array3

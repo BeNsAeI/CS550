@@ -428,7 +428,7 @@ Display( )
 		glTranslatef( 0.4, 2,8.5);
 		glRotatef(90, 0., 0., 1.);
 		glRotatef(90, 1, 0., 0.);
-		glRotatef((float)bladeAngle, 0, 0, 1);
+		glRotatef((float)bladeAngle*3, 0, 0, 1);
 		glBegin( GL_TRIANGLES );
 			glColor3f(0.75,1,1);
 			glVertex2f(  BLADE_RADIUS,  BLADE_WIDTH/2. );

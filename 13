@@ -1,0 +1,24 @@
+Shaders:
+- OpenGL Shading Language GLSL
+___
+
+- Vertex Shaders
+- Fragment Shaders
+___
+
+Vertex shaders:
+- Attribute: Per vertex information (position, color, etc)
+- Uniform: Global variables that every vertex will use
+- out / in: passed from one shader to the other
+___
+
+Very much like c languge
+- int,ivec2, ivec3, ivec4
+- float, vec2, vec3, vec4
+- mat2, mat3, mat4
+- bool, bvec2, bvec3, bvec4
+- sampler for accessing texture
+- vector components accessed through [index] notation, .rgba, .xyzw or .stpq
+- parallel SIMD operations
+- Vector component Swizzling (rearranged)
+- discard (not process a pixel)

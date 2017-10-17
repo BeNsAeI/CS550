@@ -1,0 +1,79 @@
+- glNormal3F (nx,ny,nz) could be defined per vertex or 1 that shares
+
+___
+
+Lights are passed as arrays:
+
+float * Array3(float a, float b, float c)
+{
+	float array[4]	// x,y,z,w X=x/w, Y=y/w, Z=z/w
+	array[0]	// X -> positionning
+	array[1]	// Y -> positionning
+	array[2]	// Z -> positionning
+	array[3]	// W -> set it to 0 for light source at infinity, parallel light
+}
+
+
+___
+
+Setting up material:
+glMaterialfv(GL_BACK, GL_AMBIENT, MulArray(0.4,white))
+glMaterialfv(GL_BACK, GL_DIFFUSE, MulArray(1.,white))
+glMaterialfv(GL_BACK, GL_SPECULAR, Array3(0,0,0)
+glMaterialf(GL_BACK, GL_SHININESS, 5)
+glMaterialfv(GL_BACK, GL_EMISION, MArray3(0,0,0))
+
+glMaterialfv(GL_FRONT, GL_AMBIENT, MulArray(0.4,white))
+glMaterialfv(GL_FRONT, GL_DIFFUSE, MulArray(1.,white))
+glMaterialfv(GL_FRONT, GL_SPECULAR, Array3(0,0,0)
+glMaterialf(GL_FRONT, GL_SHININESS, 5)
+glMaterialfv(GL_FRONT, GL_EMISION, MArray3(0,0,0))
+
+
+___
+
+glLightModelfv(
+glLightModeli(
+
+glLightModelfv(GL_LIGHT0,GL_AMBIENT,Array3())
+glLightModelfv(GL_LIGHT0,GL_DIFFUSE,LightColor)
+glLightModelfv(GL_LIGHT0,GL_SPECULAR,LightColor)
+
+glLightModelf(GL_LIGHT0,GL_CONSTANT_ATTENUATION, 1)
+glLightModelf(GL_LIGHT0,GL_LINEAR_ATTENUATION, 0)
+glLightModelf(GL_LIGHT0,GL_QUADRATIC_ATTENUATION,0)
+
+1/(C + Ld + Qd^2))
+
+0,0,1 => distance dimmer
+1,0,0 => All the same
+
+set Position: GL_POSITION Array3(x,y,z)
+
+- glShadeModel(GL_SMOOTH)
+- glEnable(GL_LIGHTING);
+- glEnable(GL_LIGHT0);
+
+Set spotlight direction:
+- glLightModelfv(GL_LIGHT0,GL_SPOTLIGHT_DIRECTION, Array3())
+- glLightModelf(GL_LIGHT0,GL_SPOT_EXPONENT, e)
+
+Use the shortcut setMaterial(r,g,b,shininess)
+
+___
+
+Definition of front and back if the vertex is ordered:
+- counter clockwise is front
+-         Clockwise is back
+___
+
+- For Projector effect:  Write your own shader
+___
+
+- Smooth shading can interpolate colors too
+___
+
+- Anisotropic hair works differently and normal lighting doesn't work on them
+___
+
+
