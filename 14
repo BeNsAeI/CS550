@@ -1,0 +1,64 @@
+Shaders continue:
+- Verttex shaders turn off:
+ - Vertex transformation
+ - Normal transformation
+ - .
+ - .
+ - .
+___
+
+vec4 gl_Vertex
+vec3 gl_Normal
+vec4 gl_Color
+vec4 gl_MultiTexCoord0
+mat4 gl_ModelViewMatrix
+mat4 gl_ProjectionMatrix
+mat4 gl_ModelViewProjectionMatrix
+mat3 gl_NormalMatrix
+vec4 gl_Position
+___
+
+vec4 gl_FragColor -> rgbd (Frame buffer)
+___
+
+Vertex shader:
+void main()
+{
+	gl_Position = gl_ModelViewProjectionMatrix * gl_ModelViewCordinates;
+}
+or
+void main()
+{
+	out vec3 vColor;	//Goes out to next element in pipeline
+	vec4 pos = gl_Vertex; // try ModelViewMatrix * gl_Vertex
+	vColor = pos.xyz; // gl_Color.rgbs
+	gl_Position = gl_ModelViewProjectionMatrix * gl_ModelViewCordinates;
+}
+
+
+
+Fragment shader:
+void main()
+{
+	gl_FragColor = vec4(0.5,1,0,1);
+}
+or
+void main()
+{
+	in vec3 vColor;		// Comes in from last element in pipeline
+	gl_FragColor = vec4(vColor,1);
+}
+___
+
+
+Beginning letters:
+- a	per vertex attribute
+- u	uniform variable
+- v	vertex shader
+- tc	tessalation control
+- te	tessalation evaluation
+- g	geometry
+- f	fragment shader
+___
+
+

@@ -16,9 +16,6 @@
 #include <GL/glu.h>
 #include "glut.h"
 
-#include "bmptotexture.cpp"
-float Time;
-#include "sphere.cpp"
 
 // title of these windows:
 
@@ -164,9 +161,8 @@ int		WhichColor;				// index into Colors[ ]
 int		WhichProjection;		// ORTHO or PERSP
 int		Xmouse, Ymouse;			// mouse values
 float	Xrot, Yrot;				// rotation angles in degrees
-int bladeAngle = 45;
 bool freeze = false;
-//float Time;
+float Time;
 float factor = 0;
 float eyex = 10;
 float eyey = 10;
@@ -178,22 +174,6 @@ float upx = 0;
 float upy = 1;
 float upz = 0;
 int camState = 0;
-
-int width1 = 1354;
-int height1 = 869;
-int width2 = 1024;
-int height2 = 512;
-int width3 = 151;
-int height3 = 210;
-int * width = &width1;
-int * height = &height1;
-
-unsigned char *Texture1= BmpToTexture("camo.bmp",&width1,&height1);
-unsigned char *Texture2= BmpToTexture("worldtex.bmp",&width2,&height2);
-unsigned char *Texture3 = BmpToTexture("worldtex.bmp",&width2,&height2);
-unsigned char *Texture4 = BmpToTexture("bailey.bmp",&width3,&height3);
-unsigned char *Texture = Texture1;
-
 #define TOTAL_MS (180 * 1000)
 // function prototypes:
 
@@ -205,8 +185,6 @@ void	DoDepthBufferMenu( int );
 void	DoDepthFightingMenu( int );
 void	DoDepthMenu( int );
 void	DoCameraMenu( int );
-void	DoDistort ( int );
-void	DoTexture( int );
 void	DoDebugMenu( int );
 void	DoMainMenu( int );
 void	DoProjectMenu( int );
@@ -286,16 +264,7 @@ void Animate( )
 	int ms = glutGet(GLUT_ELAPSED_TIME);
 	ms %= TOTAL_MS;
 	Time = (float)ms / (float)TOTAL_MS;
-	//std::cout << Time << std::endl;
-	if (factor < 170)
-		factor += Time*5000;
-	if(bladeAngle <= 359)
-	{
-		if (!freeze)
-			bladeAngle = bladeAngle+(int)(factor*Time);
-	}
-	else
-		bladeAngle = 1;
+	// animate with time here:
 	// force a call to Display( ) next time it is convenient:
 
 	glutSetWindow( MainWindow );
@@ -308,39 +277,6 @@ void Animate( )
 void
 Display( )
 {
-	//MjbSphere(10,64,64);
-	GLuint tex0;
-	glPixelStorei( GL_UNPACK_ALIGNMENT, 1 );
-	glGenTextures( 1, &tex0 );
-	glBindTexture( GL_TEXTURE_2D, tex0 );
-
-	//unsigned char *Texture= BmpToTexture("worldtex.bmp",&width,&height);
-	for(int i = 0;i<width2; i++)
-	{
-		for(int j = 0;j<height2;j++)
-		{
-			Texture3[i*width2+j] = Texture1[i*width1+j];
-		}
-	}
-//	std::cout << i<<": "<<(unsigned int)Texture[i] << std::endl;
-	
-	//for(int i = 0, i < )
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-	glTexEnvf( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE );
-	glPixelStorei( GL_UNPACK_ALIGNMENT, 1 );
-	glTexImage2D( 	GL_TEXTURE_2D,
-			0,
-			3,
-			*width,
-			*height,
-			0,
-			GL_RGB,
-			GL_UNSIGNED_BYTE,
-			Texture
-			);
 	if( DebugOn != 0 )
 	{
 		fprintf( stderr, "Display\n" );
@@ -431,14 +367,9 @@ Display( )
 		glDisable( GL_FOG );
 	}
 
-	
-	glEnable( GL_TEXTURE_2D );
 
-	glBindTexture( GL_TEXTURE_2D, tex0 );
-	MjbSphere(10,64,64);
-
-	glDisable( GL_TEXTURE_2D );
 	// possibly draw the axes:
+
 	if( AxesOn != 0 )
 	{
 		glColor3fv( &Colors[WhichColor][0] );
@@ -453,6 +384,7 @@ Display( )
 
 	// draw the current object:
 	glCallList( BoxList );
+	// Costume polys for each frame (instapoly):
 
 	if( DepthFightingOn != 0 )
 	{
@@ -467,7 +399,7 @@ Display( )
 
 	glDisable( GL_DEPTH_TEST );
 	glColor3f( 1., 1., 1. );
-	DoRasterString( 0., 1., 0., "" );
+	DoRasterString( 0., 1., 0., "text1" );
 
 	
 	// draw some gratuitous text that is fixed on the screen:
@@ -487,7 +419,7 @@ Display( )
 	glMatrixMode( GL_MODELVIEW );
 	glLoadIdentity( );
 	glColor3f( 1., 1., 1. );
-	DoRasterString( 5., 5., 0., "Project 3" );
+	DoRasterString( 5., 5., 0., "Project #" );
 
 
 	// swap the double-buffered framebuffers:
@@ -560,36 +492,7 @@ DoDepthMenu( int id )
 	glutSetWindow( MainWindow );
 	glutPostRedisplay( );
 }
-void DoDistort(int id)
-{
-	Distort=(bool)id;
-}
-void DoTexture(int id)
-{
-	switch(id)
-	{
-		case 0:
-			Texture = Texture1;
-			width = &width1;
-			height = &height1;
-			break;
-		case 1:
-			Texture = Texture2;
-			width = &width2;
-			height = &height2;
-			break;
-		case 2:
-			Texture = Texture3;
-			width = &width2;
-			height = &height2;
-			break;
-		case 3:
-			Texture = Texture4;
-			width = &width3;
-			height = &height2;
-			break;
-	}
-}
+
 void DoCameraMenu( int id )
 {
 	if (id == 0)
@@ -606,12 +509,12 @@ void DoCameraMenu( int id )
 	}
 	if (id == 1)
 	{
-		eyex = 0;
-		eyey = 0;
-		eyez = 0;
+		eyex = -0.4;
+		eyey = 1.85;
+		eyez = -4.85;
 		targetx = 0;
 		targety = 0;
-		targetz = 1;
+		targetz = -20;
 		upx = 0;
 		upy = 1;
 		upz = 0;
@@ -757,25 +660,13 @@ InitMenus( )
 	glutAddMenuEntry( "Perspective",   PERSP );
 
 	int cameramenu = glutCreateMenu( DoCameraMenu );
-	glutAddMenuEntry( "Outside",  0 );
-	glutAddMenuEntry( "Inside",  1 );
-	glutAddMenuEntry( "Near",  2 );
-
-	int distortmenu = glutCreateMenu( DoDistort );
-	glutAddMenuEntry( "Off",  0 );
-	glutAddMenuEntry( "On",  1 );
-
-	int texturemenu = glutCreateMenu( DoTexture );
-	glutAddMenuEntry( "Camo",  0 );
-	glutAddMenuEntry( "World",  1 );
-	glutAddMenuEntry( "Both?",  2 );
-	glutAddMenuEntry( "Prof. Bailey",  3 );
+	glutAddMenuEntry( "Main",  0 );
+	glutAddMenuEntry( "Secondary 1",  1 );
+	glutAddMenuEntry( "Secondary 2",  2 );
 
 	int mainmenu = glutCreateMenu( DoMainMenu );
 	glutAddSubMenu(   "Axes",          axesmenu);
 	glutAddSubMenu(   "Camera",        cameramenu);
-	glutAddSubMenu(	  "Texture",	texturemenu);
-	glutAddSubMenu(   "Texture Distortion",        distortmenu);
 	glutAddSubMenu(   "Colors",        colormenu);
 	glutAddSubMenu(   "Depth Buffer",  depthbuffermenu);
 	glutAddSubMenu(   "Depth Fighting",depthfightingmenu);
@@ -879,6 +770,33 @@ InitGraphics( )
 // (a display list is a way to store opengl commands in
 //  memory so that they can be played back efficiently at a later time
 //  with a call to glCallList( )
+class funcs{
+public:
+	float a(float x);
+	float b(float x);
+	float c(float x);
+	float d(float x);
+};
+float funcs::a(float x){
+	float y;
+		y = x*x;
+	return y;
+}
+float funcs::b(float x){
+	float y;
+	y = sin(x);
+	return y;
+}
+float funcs::c(float x){
+	float y;
+	y = cos(x);
+	return y;
+}
+float funcs::d(float x){
+	float y;
+	return y;
+}
+
 // Defining the time variable:
 // blade angle:
 void InitLists( )
@@ -888,9 +806,13 @@ void InitLists( )
 	float dz = BOXSIZE / 2.f;
 	glutSetWindow( MainWindow );
 
-	// List stuff here (BENSAEI)
-	//End
+	// create the object:
+	funcs myfuncs;
+	BoxList = glGenLists( 1 );
+	glNewList( BoxList, GL_COMPILE );
+	// Random Objects placed here (polyStack)
 	glEndList( );
+
 
 	// create the axes:
 
@@ -932,10 +854,6 @@ Keyboard( unsigned char c, int x, int y )
 		case 'f':
 		case 'F':
 			freeze = !freeze;
-			break;
-		case 'd':
-		case 'D':
-			Distort=!Distort;
 			break;
 		case 'q':
 		case 'Q':
