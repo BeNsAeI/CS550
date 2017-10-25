@@ -163,7 +163,13 @@ float	Scale;					// scaling factor
 int		WhichColor;				// index into Colors[ ]
 int		WhichProjection;		// ORTHO or PERSP
 int		Xmouse, Ymouse;			// mouse values
-float	Xrot, Yrot;				// rotation angles in degrees
+bool LIGHTING = false;
+bool SPOTR = false;
+bool SPOTG = false;
+bool SPOTB = false;
+bool SPOTW = false;
+bool DIR = false;
+float	Xrot, Yrot;				// rotation angles in degree
 bool freeze = false;
 float factor = 0;
 float eyex = 10;
@@ -181,6 +187,8 @@ int height = 435;
 
 unsigned char *Texture= BmpToTexture("camo.bmp",&width,&height);
 #define TOTAL_MS (180 * 1000)
+#include "light.cpp"
+
 // function prototypes:
 
 void	Animate( );
@@ -191,6 +199,7 @@ void	DoDepthBufferMenu( int );
 void	DoDepthFightingMenu( int );
 void	DoDepthMenu( int );
 void	DoCameraMenu( int );
+void	DoLighting( int );
 void	DoDebugMenu( int );
 void	DoMainMenu( int );
 void	DoProjectMenu( int );
@@ -401,11 +410,73 @@ Display( )
 	}
 
 	// Draw items here (polyDisplay)
+	//Ligting
+/*	glShadeModel( GL_SMOOTH );
+	float rgb[4] = {1,1,1,1};
+	float LightColor[4] = {1,1,1,1};
+	glLightModelfv( GL_LIGHT_MODEL_AMBIENT, MulArray3( .3f, White) );
+	glMaterialfv( GL_BACK, GL_AMBIENT, MulArray3( .4, White ) );
+	glMaterialfv( GL_BACK, GL_DIFFUSE, MulArray3( 1., White ) );
+	glMaterialfv( GL_BACK, GL_SPECULAR, Array3( 0., 0., 0. ) );
+	glMaterialf ( GL_BACK, GL_SHININESS, 5. );
+	glMaterialfv( GL_BACK, GL_EMISSION, Array3( 0., 0., 0. ) );
+	glMaterialfv( GL_FRONT, GL_AMBIENT, MulArray3( 1., rgb ) );
+	glMaterialfv( GL_FRONT, GL_DIFFUSE, MulArray3( 1., rgb ) );
+	glMaterialfv( GL_FRONT, GL_SPECULAR, MulArray3( .7, White ) );
+	glMaterialf ( GL_FRONT, GL_SHININESS, 8. );
+	glMaterialfv( GL_FRONT, GL_EMISSION, Array3( 0., 0., 0. ) );
+	glLightModelfv( GL_LIGHT_MODEL_AMBIENT, MulArray3( .2, White ) );
+	glLightModeli ( GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE );
+	glLightfv( GL_LIGHT0, GL_AMBIENT, Array3( 0., 0., 0. ) );
+	glLightfv( GL_LIGHT0, GL_DIFFUSE, LightColor );
+	glLightfv( GL_LIGHT0, GL_SPECULAR, LightColor );
+	glLightf ( GL_LIGHT0, GL_CONSTANT_ATTENUATION, 1. );
+	glLightf ( GL_LIGHT0, GL_LINEAR_ATTENUATION, 0. );
+	glLightf ( GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0. );
+	glEnable( GL_NORMALIZE );
+	glLightfv( GL_LIGHT0, GL_POSITION, Array3(5, 5, 5) );
+	glEnable( GL_LIGHTING );
+	glEnable( GL_LIGHT0 );*/
+	glShadeModel( GL_SMOOTH );
+	if(LIGHTING)
+		glEnable( GL_LIGHTING );
+	else
+		glDisable( GL_LIGHTING );
+	if(DIR)
+		SetSpotLight(GL_LIGHT4,5,5,5,-1,-1,-1,0,1,1);
+
+	else
+		glDisable( GL_LIGHT4 );
+	float r = (float)220/(float)255;
+	float g = (float)68/(float)255;
+	float b = (float)5/(float)255;
+	SetMaterial( r,g,b,1.0 );
+	glColor3f((float)220/(float)255,(float)68/(float)255,(float)5/(float)255);
+	glutSolidTeapot(5);
+	glColor3f(0,0,0);
+	glutWireTeapot(5);
+	SetMaterial( r,g,b,0.0 );
+	glutSolidTorus( 30,
+			30,
+			64,64);
+	glColor3f((float)220/(float)255,(float)68/(float)255,(float)5/(float)255);
+	glutWireTorus(  30,
+			30,
+			64,64);
+
+	glColor3f(1,1,1);
+
+	//shapes
 	glPushMatrix();
+	SetMaterial( 1,1,1,1 );
 	glRotatef(45, 0, 1, 1);
 	glRotatef((float)bladeAngle, 0, 0, 1);
 	glTranslatef( 7.0, 7.0, 0.0 );
 	glRotatef((float)bladeAngle*10,0, 1, 1);
+	if (SPOTR)
+		SetPointLight(GL_LIGHT0, 0,0,0,1,0,0);
+	else
+		glDisable( GL_LIGHT0 );
 	glEnable( GL_TEXTURE_2D );
 	glBindTexture( GL_TEXTURE_2D, tex0 );
 	MjbSphere(1,32,32);
@@ -413,10 +484,15 @@ Display( )
 	glPopMatrix();
 
 	glPushMatrix();
+	SetMaterial( 1,1,1,0.25 );
 	glRotatef(-45, 0, 1, 1);
 	glRotatef((float)bladeAngle, 0, 0, 1);
 	glTranslatef( 7.0, 7.0, 0.0 );
 	glRotatef(-(float)bladeAngle*10,0, 1, 1);
+	if (SPOTG)
+		SetPointLight(GL_LIGHT1, 0,0,0,0,1,0);
+	else
+		glDisable( GL_LIGHT1 );
 	glEnable( GL_TEXTURE_2D );
 	glBindTexture( GL_TEXTURE_2D, tex0 );
 	MjbSphere(1,32,32);
@@ -424,10 +500,15 @@ Display( )
 	glPopMatrix();
 
 	glPushMatrix();
+	SetMaterial( 1,1,1,0.25 );
         glRotatef(90, 0, 1, 1);
         glRotatef(-(float)bladeAngle, 0, 0, 1);
         glTranslatef( 7.0, 7.0, 0.0 );
         glRotatef(-(float)bladeAngle*10,0, 1, 1);
+	if(SPOTB)
+		SetPointLight(GL_LIGHT2, 0,0,0,0,0,1);
+	else
+		glDisable( GL_LIGHT2 );
         glEnable( GL_TEXTURE_2D );
         glBindTexture( GL_TEXTURE_2D, tex0 );
         MjbSphere(1,32,32);
@@ -435,9 +516,15 @@ Display( )
         glPopMatrix();
 
 	glPushMatrix();
+	SetMaterial( 1,1,1,0.25 );
         glRotatef(-(float)bladeAngle, 0, 0, 1);
         glTranslatef( 7.0, 7.0, 0.0 );
-        glRotatef(-(float)bladeAngle*10,0, 1, 1);
+        glRotatef(-(float)bladeAngle,0, 1, 1);
+	if (SPOTW)
+	{
+		SetPointLight(GL_LIGHT2, 0,0,0,1,1,1);
+	}else
+		glDisable( GL_LIGHT3 );
         glEnable( GL_TEXTURE_2D );
         glBindTexture( GL_TEXTURE_2D, tex0 );
         MjbSphere(1,32,32);
@@ -566,6 +653,33 @@ DoDepthMenu( int id )
 
 	glutSetWindow( MainWindow );
 	glutPostRedisplay( );
+}
+
+void DoLighting( int id)
+{
+	switch(id){
+		case 0:	//off
+			LIGHTING = false;
+			break;
+		case 1: //on
+			LIGHTING = true;
+			break;
+		case 2: // only spotlight
+			DIR =!DIR;
+			break;
+		case 3: // only red
+			SPOTR = !SPOTR;
+			break;
+		case 4: // only green
+			SPOTG = !SPOTG;
+			break;
+		case 5: // only blue
+			SPOTB = !SPOTB;
+			break;
+		case 6:	//white
+			SPOTW = !SPOTW;
+			break;
+	}
 }
 
 void DoCameraMenu( int id )
@@ -738,10 +852,20 @@ InitMenus( )
 	glutAddMenuEntry( "Main",  0 );
 	glutAddMenuEntry( "2nd",  1 );
 	glutAddMenuEntry( "3rd",  2 );
+	
+	int lightmenu = glutCreateMenu( DoLighting );
+	glutAddMenuEntry( "Off",  0 );
+	glutAddMenuEntry( "On",  1 );
+	glutAddMenuEntry( "Toggle Red (1)",  3 );
+	glutAddMenuEntry( "Toggle Green (2)",  4 );
+	glutAddMenuEntry( "Toggle Blue (3)",  5 );
+	glutAddMenuEntry( "Toggle White (4)",  6 );
+	glutAddMenuEntry( "Toggle Direct (5)",  2 );
 
 	int mainmenu = glutCreateMenu( DoMainMenu );
 	glutAddSubMenu(   "Axes",          axesmenu);
 	glutAddSubMenu(   "Camera",        cameramenu);
+	glutAddSubMenu(   "Lighting (L)",        lightmenu);
 	glutAddSubMenu(   "Colors",        colormenu);
 	glutAddSubMenu(   "Depth Buffer",  depthbuffermenu);
 	glutAddSubMenu(   "Depth Fighting",depthfightingmenu);
@@ -882,21 +1006,10 @@ void InitLists( )
 	glutSetWindow( MainWindow );
 
 	// create the object:
-	funcs myfuncs;
 	BoxList = glGenLists( 1 );
 	glNewList( BoxList, GL_COMPILE );
 	// Random Objects placed here (SpolyStack)
-	glColor3f((float)220/(float)255,(float)68/(float)255,(float)5/(float)255);
-	glutSolidTeapot(5);
-	glColor3f(0,0,0);
-	glutWireTeapot(5);
-	glutSolidTorus( 30,
-			30,
-			64,64);
-	glColor3f((float)220/(float)255,(float)68/(float)255,(float)5/(float)255);
-	glutWireTorus(  30,
-			30,
-			64,64);
+	
 	glEndList( );
 
 
@@ -940,6 +1053,25 @@ Keyboard( unsigned char c, int x, int y )
 		case 'f':
 		case 'F':
 			freeze = !freeze;
+			break;
+		case 'l':
+		case 'L':
+			LIGHTING = !LIGHTING;
+			break;
+		case '1':
+			SPOTR = !SPOTR;
+			break;
+		case '2':
+			SPOTG = !SPOTG;
+			break;
+		case '3':
+			SPOTB = !SPOTB;
+			break;
+		case '4':
+			SPOTW = !SPOTW;
+			break;
+		case '5':
+			DIR = !DIR;
 			break;
 		case 'q':
 		case 'Q':
