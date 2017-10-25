@@ -456,6 +456,7 @@ Display( )
 	glColor3f(0,0,0);
 	glutWireTeapot(5);
 	SetMaterial( r,g,b,0.0 );
+	glShadeModel( GL_FLAT );
 	glutSolidTorus( 30,
 			30,
 			64,64);
