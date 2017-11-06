@@ -397,16 +397,16 @@ Display( )
 
 	// call GLSL Object (GLSLOBJ)
 	Pattern->Use();
-	Pattern->SetUniformVariable("uTime",(float)(Time));
-	Pattern->SetUniformVariable("uDist",(float)(dist));
-	Pattern->SetUniformVariable("uPat",(float)(pat));
-	Pattern->SetUniformVariable("uKa",(float)0.25);
-	Pattern->SetUniformVariable("uKd",(float).5);
-	Pattern->SetUniformVariable("uKs",(float).25);
-	Pattern->SetUniformVariable("uShininess",(float)1);
-	Pattern->SetUniformVariable("uS0",1);
-	Pattern->SetUniformVariable("uT0",1);
-	Pattern->SetUniformVariable("uSize",(float)1);
+	Pattern->SetUniformVariable((char *)"uTime",(float)(Time));
+	Pattern->SetUniformVariable((char *)"uDist",(float)(dist));
+	Pattern->SetUniformVariable((char *)"uPat",(float)(pat));
+	Pattern->SetUniformVariable((char *)"uKa",(float)0.25);
+	Pattern->SetUniformVariable((char *)"uKd",(float).5);
+	Pattern->SetUniformVariable((char *)"uKs",(float).25);
+	Pattern->SetUniformVariable((char *)"uShininess",(float)1);
+	Pattern->SetUniformVariable((char *)"uS0",1);
+	Pattern->SetUniformVariable((char *)"uT0",1);
+	Pattern->SetUniformVariable((char *)"uSize",(float)1);
 	// draw the current object:
 	glCallList( BoxList );
 	// End GLSL pattern
@@ -819,7 +819,7 @@ InitGraphics( )
 	// Setup shaders
 
 	Pattern = new GLSLProgram( );
-	bool valid = Pattern->Create( "lighting2.vert",  "lighting2.frag" );
+	bool valid = Pattern->Create( (char *)"lighting2.vert",  (char *)"lighting2.frag" );
 	if( ! valid )
 	{
 		fprintf( stderr, "Shader cannot be created!\n" );
