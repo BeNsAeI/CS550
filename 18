@@ -1,0 +1,31 @@
+- CS 457/557
+ - Renderman
+- CS 419/519
+ - Volkan
+___
+
+Transparency (Wrong terminology)
+- Blending (This is closer to what happens)
+- it is a subtractive process
+
+glMaterialfv(GL_side_type, rgba)
+ - GL_BACK_AMBIENT, GL_FRONT_DIFFUSE
+ - glColor4f(r,g,b,a)
+
+This is what to do:
+ - glEnable(GL_BLEND)
+ - Draw soolid things first
+ - make z buffer readonly
+  - glDepthMask(GL_FALSE)
+- in Display()
+ - glBlendFunc(src,dst)
+  - GL_SRC_ALPHA
+  - GL_ONE_MINUS_SRC_ALPHA
+  - C' = aS + (1-S)
+ - Draw the transparent
+ - glDepthMask(GL_TRUE)
+ - glDisable(GL_BLEND)
+
+* if we are worried about Z-Buffer being changed after transparency why don't we 
+do the transparency first or why don't we do back geometry first?
+

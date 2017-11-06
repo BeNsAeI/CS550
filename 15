@@ -1,0 +1,18 @@
+shaders continue
+- Look at the codes in pervertex lighting project 5
+this goes in initGraphics
+GLSLProgram *Pattern;
+...
+Pattern = new GLSLProgram();
+
+bool valid Pattern->create("vShader.vert","fShader.frag");
+___
+
+Use this in Display
+Pattern -> Use(); //GL use program
+Pattern -> SetUniformVariable("uS0",S0);	// Use uniform variables
+Pattern -> SetUniformVarianle("uColor",R,G,B);
+Pattern -> setAttributeVariable("aV0",V0);
+
+Pattern -> Use(0);	// Going back to normal OpenGL
+___

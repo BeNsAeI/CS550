@@ -1,0 +1,27 @@
+glEnableClientState(Type) 
+glDisableClientState(Type) 
+
+Types: 
+- GL_VERTEX_ARRAY 
+- GL_COLOR_ARRAY 
+- GL_NORMAL_ARRAY 
+- GL_TEXTURE_COORD_ARRAY
+___
+
+gl*Pointer(Size,type,stride,offset)
+ * are:
+- Vertex
+- Color
+- etc
+___
+
+glDrawArrays(GL_TRIANGLES,first, numVertecies)
+___
+
+gl elements:
+glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,buffb)
+glDrawElements(GL_Quads, 24,GL_UNSIGNED_INT, (GLuchar *)0)
+___
+
+Shader project hint:
+- 

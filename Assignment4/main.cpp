@@ -411,32 +411,7 @@ Display( )
 
 	// Draw items here (polyDisplay)
 	//Ligting
-/*	glShadeModel( GL_SMOOTH );
-	float rgb[4] = {1,1,1,1};
-	float LightColor[4] = {1,1,1,1};
-	glLightModelfv( GL_LIGHT_MODEL_AMBIENT, MulArray3( .3f, White) );
-	glMaterialfv( GL_BACK, GL_AMBIENT, MulArray3( .4, White ) );
-	glMaterialfv( GL_BACK, GL_DIFFUSE, MulArray3( 1., White ) );
-	glMaterialfv( GL_BACK, GL_SPECULAR, Array3( 0., 0., 0. ) );
-	glMaterialf ( GL_BACK, GL_SHININESS, 5. );
-	glMaterialfv( GL_BACK, GL_EMISSION, Array3( 0., 0., 0. ) );
-	glMaterialfv( GL_FRONT, GL_AMBIENT, MulArray3( 1., rgb ) );
-	glMaterialfv( GL_FRONT, GL_DIFFUSE, MulArray3( 1., rgb ) );
-	glMaterialfv( GL_FRONT, GL_SPECULAR, MulArray3( .7, White ) );
-	glMaterialf ( GL_FRONT, GL_SHININESS, 8. );
-	glMaterialfv( GL_FRONT, GL_EMISSION, Array3( 0., 0., 0. ) );
-	glLightModelfv( GL_LIGHT_MODEL_AMBIENT, MulArray3( .2, White ) );
-	glLightModeli ( GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE );
-	glLightfv( GL_LIGHT0, GL_AMBIENT, Array3( 0., 0., 0. ) );
-	glLightfv( GL_LIGHT0, GL_DIFFUSE, LightColor );
-	glLightfv( GL_LIGHT0, GL_SPECULAR, LightColor );
-	glLightf ( GL_LIGHT0, GL_CONSTANT_ATTENUATION, 1. );
-	glLightf ( GL_LIGHT0, GL_LINEAR_ATTENUATION, 0. );
-	glLightf ( GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0. );
-	glEnable( GL_NORMALIZE );
-	glLightfv( GL_LIGHT0, GL_POSITION, Array3(5, 5, 5) );
-	glEnable( GL_LIGHTING );
-	glEnable( GL_LIGHT0 );*/
+
 	glShadeModel( GL_SMOOTH );
 	if(LIGHTING)
 		glEnable( GL_LIGHTING );
@@ -469,7 +444,8 @@ Display( )
 
 	//shapes
 	glPushMatrix();
-	SetMaterial( 1,1,1,1 );
+	glColor3f(1,0,0);
+	SetMaterial( 1,0,0,1.0 );
 	glRotatef(45, 0, 1, 1);
 	glRotatef((float)bladeAngle, 0, 0, 1);
 	glTranslatef( 7.0, 7.0, 0.0 );
@@ -485,7 +461,8 @@ Display( )
 	glPopMatrix();
 
 	glPushMatrix();
-	SetMaterial( 1,1,1,0.25 );
+	glColor3f(0,1,0);
+	SetMaterial( 0,1,0,0 );
 	glRotatef(-45, 0, 1, 1);
 	glRotatef((float)bladeAngle, 0, 0, 1);
 	glTranslatef( 7.0, 7.0, 0.0 );
@@ -501,7 +478,8 @@ Display( )
 	glPopMatrix();
 
 	glPushMatrix();
-	SetMaterial( 1,1,1,0.25 );
+	glColor3f(0,0,1);
+	SetMaterial( 0,0,1,0.25 );
         glRotatef(90, 0, 1, 1);
         glRotatef(-(float)bladeAngle, 0, 0, 1);
         glTranslatef( 7.0, 7.0, 0.0 );
@@ -517,6 +495,7 @@ Display( )
         glPopMatrix();
 
 	glPushMatrix();
+	glColor3f(1,1,1);
 	SetMaterial( 1,1,1,0.25 );
         glRotatef(-(float)bladeAngle, 0, 0, 1);
         glTranslatef( 7.0, 7.0, 0.0 );

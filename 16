@@ -1,0 +1,69 @@
+- Single sheet of paper by wednesday
+- doable in last 2 weeks of quarter
+___
+
+Pattern->SetAttributeVariable("","");
+___
+
+global:
+GLSLProgram * Pattern;
+
+initgraphics:
+Pattern = new GLSLProgram();
+bool valid = pattern->create("vershader.v", "fragshader.frag");
+
+in display:
+Pattern->Use();
+PatternSetUniformVariable()
+Draw objects here
+Pattern->Use(0);	// back to normal
+___
+
+2D texture:
+Vertext shader:
+out vec2 vST -> gl_MultiTexCoord0.st (which is glTexCoord2f(s,t))
+
+in fragment texture:
+uniform sampler uTexUnit;
+vec3 newcolor = texture(uTexUnit,vST).rgb;
+gl_FragColor = vec4(newcolor,1.);
+
+in openGL: 
+glActiveTexture(GL_TEXTURE0);
+glBinTexture(GL_TEXTURE0,TextureName);
+Pattern->setUniformVariable("uTextUnite",0)
+___
+
+Vertex Buffer Objects: VBO
+(Object implies it is in GPU memory)
+
+static GLfloat array[][3]=
+{
+	{x,y,z},
+}
+
+We can do the same with texture and color as well
+"Bind" attaches to a state.
+
+- array buffer:
+ - Vertex
+ - Colors
+ - Normal
+ - Texture cordinates
+
+- Element Array Buffer
+ - 
+
+- Textures
+.
+.
+.
+
+GLuint BuffA
+glgenBuffer (...Lookup...)
+
+glBindBuffer(GL_ARRAY_BUFFER, buffA)
+glBufferData(GL_ARRAY_BUFFER,numBytes,data, usage); \\ STATIC, DYNAMIC, DRAW, READ
+glDrawArrays(GL_TRIANGLES,0,numVerticies);
+
+Usage: GL_STATIC_DRAW is mostly used in this class

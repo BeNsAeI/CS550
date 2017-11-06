@@ -109,14 +109,14 @@ enum Colors
 
 char * ColorNames[ ] =
 {
-	"Red",
-	"Yellow",
-	"Green",
-	"Cyan",
-	"Blue",
-	"Magenta",
-	"White",
-	"Black"
+	(char *)"Red",
+	(char *)"Yellow",
+	(char *)"Green",
+	(char *)"Cyan",
+	(char *)"Blue",
+	(char *)"Magenta",
+	(char *)"White",
+	(char *)"Black"
 };
 
 
@@ -399,7 +399,7 @@ Display( )
 
 	glDisable( GL_DEPTH_TEST );
 	glColor3f( 1., 1., 1. );
-	DoRasterString( 0., 1., 0., "text1" );
+	DoRasterString( 0., 1., 0., (char *)"text1" );
 
 	
 	// draw some gratuitous text that is fixed on the screen:
@@ -419,7 +419,7 @@ Display( )
 	glMatrixMode( GL_MODELVIEW );
 	glLoadIdentity( );
 	glColor3f( 1., 1., 1. );
-	DoRasterString( 5., 5., 0., "Project #" );
+	DoRasterString( 5., 5., 0., (char *)"Project #" );
 
 
 	// swap the double-buffered framebuffers:
