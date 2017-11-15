@@ -1,0 +1,33 @@
+Rendering:
+- The rendering equation:
+- B(P,d0,Lamda) = E(P,d0,Lamda) + Integral_Omega(B(P,d0,Lamda)f(Lamda,di,d0)(di.n^)d (omega))
+
+Questions:
+- Why am  I doing this
+- How realistic does it have to be?
+- How much  computation i need for this image
+- Lighting is important?
+- Illumination: global or local
+- Do I need shadows?
+- Reflections/refractions?
+- How good these reflection/refractions need to be?
+
+Lighting:
+- Local, one object is affected by light source
+- Global: how does the reflection of light from others make it look like?
+
+aproaches:
+- Start from object (this is openGL approach)
+- start from eye
+
+Radiosity:
+- B_i A_i = E_i A_i + p_i SUM(B_j A_j F_{j->i})
+- B: Light energy (intencity)
+- A: area
+- E: Emitted intensity
+- p: Reflectivity
+- F: Form factor/ fraction
+
+Ray tracing:
+- start from eye and go to the object
+- continues next lecture

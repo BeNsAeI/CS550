@@ -1,0 +1,36 @@
+F - E + v = 2(B-G):
+F: Face
+E: edge
+V: vertex
+L: Inner loops
+B: Bodies
+G: 
+___
+
+GLM: Graphic Language Mathematics
+- Used for generating matricies
+- glm.gtruc.net/0.9.8.5
+- #define GLM_FORCE_RADIANS
+- #include <glm/glm.hpp>
+- #include <glm/gtc/...>
+
+- glm::mat4
+- glm::vec3 eye (0.,0.,3)
+- glm::vec3 look(0,0,0)
+- glm::vec3 up(0,1,0)
+
+- modelview = glm::lookAt(eye,look,up);
+- modelview = glm::rotate(modelview, D2R*Yrot, glm::vec3());
+- modelview = glm::scale(modelview, glm::vec3(Scale,Scale,Scale));
+- glMultMatrixf(glm::value_ptr(modelview));
+___
+
+Extended bezier point:
+P01 = (1-t)P0 + tP1 with t = 0.0 to 1.0
+P12 = (1-t)P1 + tP2 with t = 0.0 to 1.0
+
+Now blend the two lines:
+Pt = (1-t)P01 + t(P12)
+       2                     2
+= (1-t)  P0 + 2 t(1-t) P1 + t  P2
+and repeat for more lines

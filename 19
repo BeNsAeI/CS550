@@ -1,0 +1,12 @@
+Geometric modeling:
+- 3D boolean operations (union, subtract, intersect, etc)
+ - Constructive solid geometry: CSG
+
+- Curve sculping
+ - Bezier Curve Sculping
+ - P(t) = (1-t)^3P0 + 3t(1-t)^2P1 + 3t^2(1-t)P2 + t^3P3
+  - 0 <= t <= 1
+  - P has xyz parameters
+ - Ksplines?
+
+- Lattice
