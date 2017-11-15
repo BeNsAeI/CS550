@@ -805,6 +805,44 @@ void bezier(struct point one, struct point two, struct point three, struct point
 }
 // Defining the time variable:
 // blade angle:
+void drawHair(int X, int Y, int Z,float angle, int resolution)
+{
+	struct point a;
+	struct point b;
+	struct point c;
+	struct point d;
+	struct point line[resolution];
+	a.X = 0;
+	a.Y = 0;
+	a.Z = 0;
+
+	b.X = 0;
+	b.Y = 1;
+	b.Z = -1;
+
+	c.X = 0;
+	c.Y = -0.5;
+	c.Z = -3.25;
+
+	d.X = 0;
+	d.Y = -2;
+	d.Z = -3;
+	bezier(a,b,c,d,line,resolution);
+	glPushMatrix();
+	glTranslatef(X,Y,Z);
+	glPushMatrix();
+	glRotatef(angle-30,1,0,0);
+	glBegin(GL_LINE_STRIP);
+	for(int i = 0; i < resolution; i++)
+	{
+		glColor3f(1,line[i].Y/2,line[i].Y*3/4);
+		glVertex3f(line[i].X,line[i].Y,line[i].Z);
+	}
+	glEnd();
+	glPopMatrix();
+	glPopMatrix();
+
+}
 void InitLists( )
 {
 	float dx = BOXSIZE / 2.f;
@@ -845,7 +883,7 @@ void InitLists( )
 		glColor3f(1,line[i].Y/2,line[i].Y*3/4);
 		glVertex3f(line[i].X,line[i].Y,line[i].Z);
 	}
-	
+
 	glEnd();
 	glBegin(GL_LINE_STRIP);
 	for (int i = 0; i < resolution; i++)
@@ -991,7 +1029,7 @@ void InitLists( )
 		glVertex3f(line[i].X,line[i].Y,line[i].Z);
 	}
 	glVertex3f(0,-4.5,-1.5);
-		
+	
 	glEnd();
 
 	glBegin(GL_LINE_STRIP);
@@ -1005,6 +1043,19 @@ void InitLists( )
 	glVertex3f(0,-1.5,-6);
 	glEnd();
 	glPointSize(1);
+
+
+	drawHair(0,6,-12, 5  ,resolution);
+	drawHair(0,9,-9,  10  ,resolution);
+	drawHair(0,10,-6,  15  ,resolution);
+	drawHair(0,11,-3,  20  ,resolution);
+	drawHair(0,11,0,   25  ,resolution);
+	drawHair(0,11,3 ,  30  ,resolution);
+	drawHair(0,10,6,   35  ,resolution);
+	drawHair(0,9,9,   40  ,resolution);
+	drawHair(0,7,11,  45  ,resolution);
+	drawHair(0,5,13,  50 ,resolution);
+
 	glLineWidth( 1. );
 	glEndList( );
 
