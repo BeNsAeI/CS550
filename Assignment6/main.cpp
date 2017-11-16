@@ -174,6 +174,9 @@ float upx = 0;
 float upy = 1;
 float upz = 0;
 int camState = 0;
+int resolution = 100;
+bool CTL = false;
+bool CTP = false;
 #define TOTAL_MS (180 * 1000)
 struct point{
 	float X;
@@ -191,6 +194,7 @@ void	DoDepthBufferMenu( int );
 void	DoDepthFightingMenu( int );
 void	DoDepthMenu( int );
 void	DoCameraMenu( int );
+void    DoHandleMenu( int );
 void	DoDebugMenu( int );
 void	DoMainMenu( int );
 void	DoProjectMenu( int );
@@ -269,7 +273,8 @@ void Animate( )
 	// for Display( ) to find:
 	int ms = glutGet(GLUT_ELAPSED_TIME);
 	ms %= TOTAL_MS;
-	Time = (float)ms / (float)TOTAL_MS;
+	if(!freeze)
+		Time = (float)ms / (float)TOTAL_MS;
 	// animate with time here:
 	// force a call to Display( ) next time it is convenient:
 
@@ -277,9 +282,216 @@ void Animate( )
 	glutPostRedisplay( );
 }
 
-
+void bezier(struct point one, struct point two, struct point three, struct point four, struct point * out, int res)
+{
+//	std::cout << one.X << ", "
+//		  << one.Y << ", "
+//		  << one.Z << ", "
+//	<< std::endl;
+	for(int i = 0; i < res; i++)
+	{
+		float t = (float)i * (float)1 / (float)res;
+		out[i].X = (pow((1-t),3)*one.X) +
+			(3*t*pow(1-t,2)*two.X) +
+			(3*pow(t,2)*(1-t)*three.X) +
+			(pow(t,3)*four.X);
+		out[i].Y = (pow((1-t),3)*one.Y) +
+			(3*t*pow(1-t,2)*two.Y) +
+			(3*pow(t,2)*(1-t)*three.Y) +
+			(pow(t,3)*four.Y);
+		out[i].Z = (pow((1-t),3)*one.Z) +
+			(3*t*pow(1-t,2)*two.Z) +
+			(3*pow(t,2)*(1-t)*three.Z) +
+			(pow(t,3)*four.Z);
+//		std::cout << out[i].X << ", "
+//			  << out[i].Y << ", "
+//			  << out[i].Z << ", "
+//		<< std::endl;
+	}
+}
 // draw the complete scene:
+void drawHair(float X, float Y, float Z,float angle, int resolution)
+{
+	struct point a;
+	struct point b;
+	struct point c;
+	struct point d;
+	struct point line[resolution];
+	a.X = 0;
+	a.Y = 0;
+	a.Z = 0;
 
+	b.X = 0;
+	b.Y = 1;
+	b.Z = -1;
+
+	c.X = 0;
+	c.Y = -0.5;
+	c.Z = -3.25;
+
+	d.X = 0;
+	d.Y = -2;
+	d.Z = -3 - (sin(Time*500)/4);
+	bezier(a,b,c,d,line,resolution);
+	glPushMatrix();
+	glTranslatef(X,Y,Z);
+	glPushMatrix();
+	glRotatef(angle-30,1,0,0);
+	if(CTP)
+	{
+		glPointSize(5);
+		glBegin(GL_POINTS);
+		glColor3f(1,0,0);
+		glVertex3f(a.X,a.Y,a.Z);
+		glVertex3f(b.X,b.Y,b.Z);
+		glVertex3f(c.X,c.Y,c.Z);
+		glVertex3f(d.X,d.Y,d.Z);
+		glEnd();
+		glPointSize(1);
+	}
+	if(CTL)
+	{
+		glBegin(GL_LINE_STRIP);
+		glColor3f(0,0.5,0.5);
+		glVertex3f(a.X,a.Y,a.Z);
+		glVertex3f(b.X,b.Y,b.Z);
+		glVertex3f(c.X,c.Y,c.Z);
+		glVertex3f(d.X,d.Y,d.Z);
+		glEnd();
+	}
+	glBegin(GL_LINE_STRIP);
+	for(int i = 0; i < resolution; i++)
+	{
+		glColor3f(1,line[i].Y/2,line[i].Y*3/4);
+		glVertex3f(line[i].X,line[i].Y,line[i].Z);
+	}
+	glEnd();
+	glPopMatrix();
+	glPopMatrix();
+
+}
+void drawEyebrow(float X, float Y, float Z, float side, int resolution)
+{
+	struct point a;
+	struct point b;
+	struct point c;
+	struct point d;
+	struct point line[resolution];
+
+	a.X = 0;
+	a.Y = 0;
+	a.Z = 0;
+
+	b.X = 0;
+	b.Y = 1-sin(Time*1000);
+	b.Z = 3*side;
+
+	c.X = 0;
+	c.Y = 2-sin(Time*1000);
+	c.Z = 4*side;
+
+	d.X = 0;
+	d.Y = 1;
+	d.Z = 5*side;
+
+	bezier(a,b,c,d,line,resolution);
+	glPushMatrix();
+	glTranslatef(X,Y,Z);
+	if(CTP)
+	{
+		glPointSize(5);
+		glBegin(GL_POINTS);
+		glColor3f(1,0,0);
+		glVertex3f(a.X,a.Y,a.Z);
+		glVertex3f(b.X,b.Y,b.Z);
+		glVertex3f(c.X,c.Y,c.Z);
+		glVertex3f(d.X,d.Y,d.Z);
+		glEnd();
+		glPointSize(1);
+	}
+	if(CTL)
+	{
+		glBegin(GL_LINE_STRIP);
+		glColor3f(0,0.5,0.5);
+		glVertex3f(a.X,a.Y,a.Z);
+		glVertex3f(b.X,b.Y,b.Z);
+		glVertex3f(c.X,c.Y,c.Z);
+		glVertex3f(d.X,d.Y,d.Z);
+		glEnd();
+	}
+	glBegin(GL_LINE_STRIP);
+	glColor3f(1,1,1);
+	for(int i = 0; i < resolution; i++)
+	{
+		glVertex3f(line[i].X,line[i].Y,line[i].Z);
+	}
+	glEnd();
+	glPopMatrix();
+}
+void drawTongue(float X, float Y, float Z, int resolution)
+{
+	struct point a;
+	struct point b;
+	struct point c;
+	struct point d;
+	struct point line[resolution];
+
+	a.X = 0;
+	a.Y = 0.5;
+	a.Z = 0;
+
+	b.X = 0;
+	b.Y = 2-sin(Time*5000);
+	b.Z = -3;
+
+	c.X = 0;
+	c.Y = -2-sin(Time*5000);
+	c.Z = -3;
+
+	d.X = 0;
+	d.Y = -0.5;
+	d.Z = 0;
+	bezier(a,b,c,d,line,resolution);
+	glPushMatrix();
+	glTranslatef(X,Y,Z);
+	glRotatef(-65,1,0,0);
+	glPushMatrix();
+	if(CTP)
+	{
+		glPointSize(5);
+		glBegin(GL_POINTS);
+		glColor3f(1,0,0);
+		glVertex3f(a.X,a.Y,a.Z);
+		glVertex3f(b.X,b.Y,b.Z);
+		glVertex3f(c.X,c.Y,c.Z);
+		glVertex3f(d.X,d.Y,d.Z);
+		glEnd();
+		glPointSize(1);
+	}
+	if(CTL)
+	{
+		glBegin(GL_LINE_STRIP);
+		glColor3f(0,0.5,0.5);
+		glVertex3f(a.X,a.Y,a.Z);
+		glVertex3f(b.X,b.Y,b.Z);
+		glVertex3f(c.X,c.Y,c.Z);
+		glVertex3f(d.X,d.Y,d.Z);
+		glEnd();
+	}
+	glBegin(GL_LINE_STRIP);
+	for(int i = 0; i < resolution; i++)
+	{
+		glColor3f(1,line[i].Y/2,line[i].Y*3/4);
+		glVertex3f(line[i].X,line[i].Y,line[i].Z);
+	}
+	glEnd();
+	glBegin(GL_LINE_STRIP);
+	glVertex3f(0,0,0);
+	glVertex3f(0,0-sin(Time*5000),-1);
+	glEnd();
+	glPopMatrix();
+	glPopMatrix();
+}
 void
 Display( )
 {
@@ -390,8 +602,383 @@ Display( )
 
 	// draw the current object:
 	glCallList( BoxList );
-	// Costume polys for each frame (instapoly):
+	// Costume polys for each frame (instapolyd polyi):
+	glLineWidth(3);
+	struct point a;
+	a.X = 0;
+	a.Y = 1.5;
+	a.Z = -14.5;
+	struct point b;
+	b.X = 0;
+	b.Y = 14.5;
+	b.Z = -10;
+	struct point c;
+	c.X = 0;
+	c.Y = 14;
+	c.Z = 10;
+	struct point d;
+	d.X = 0;
+	d.Y = 1;
+	d.Z = 14.5;
+	
+	struct point line[resolution];
+	bezier(a,b,c,d,line,resolution);
+	if(CTP)
+	{
+		glPointSize(5);
+		glBegin(GL_POINTS);
+		glColor3f(1,0,0);
+		glVertex3f(a.X,a.Y,a.Z);
+		glVertex3f(b.X,b.Y,b.Z);
+		glVertex3f(c.X,c.Y,c.Z);
+		glVertex3f(d.X,d.Y,d.Z);
+		glEnd();
+		glPointSize(1);
+	}
+	if(CTL)
+	{
+		glBegin(GL_LINE_STRIP);
+		glColor3f(0,0.5,0.5);
+		glVertex3f(a.X,a.Y,a.Z);
+		glVertex3f(b.X,b.Y,b.Z);
+		glVertex3f(c.X,c.Y,c.Z);
+		glVertex3f(d.X,d.Y,d.Z);
+		glEnd();
+	}
+	glBegin(GL_LINE_STRIP);
+	for (int i = 0; i < resolution; i++)
+	{
+		glColor3f(1,line[i].Y/2,line[i].Y*3/4);
+		glVertex3f(line[i].X,line[i].Y,line[i].Z);
+	}
 
+	glEnd();
+	if(CTP)
+	{
+		glPointSize(5);
+		glBegin(GL_POINTS);
+		glColor3f(1,0,0);
+		glVertex3f(a.X,-a.Y,a.Z);
+		glVertex3f(b.X,-b.Y,b.Z);
+		glVertex3f(c.X,-c.Y,c.Z);
+		glVertex3f(d.X,-d.Y,d.Z);
+		glEnd();
+		glPointSize(1);
+	}
+	if(CTL)
+	{
+		glBegin(GL_LINE_STRIP);
+		glColor3f(0,0.5,0.5);
+		glVertex3f(a.X,-a.Y,a.Z);
+		glVertex3f(b.X,-b.Y,b.Z);
+		glVertex3f(c.X,-c.Y,c.Z);
+		glVertex3f(d.X,-d.Y,d.Z);
+		glEnd();
+	}
+	glBegin(GL_LINE_STRIP);
+	for (int i = 0; i < resolution; i++)
+	{
+		glColor3f(1,line[i].Y/2,line[i].Y*3/4);
+		glVertex3f(line[i].X,-line[i].Y,line[i].Z);
+	}
+	glEnd();
+
+	a.X = 0;
+	a.Y = 1;
+	a.Z = -14;
+
+	b.X = 0;
+	b.Y = 3;
+	b.Z = -17;
+
+	c.X = 0;
+	c.Y = -3;
+	c.Z = -17;
+
+	d.X = 0;
+	d.Y = -1;
+	d.Z = -14;
+
+	bezier(a,b,c,d,line,resolution);
+	if(CTP)
+	{
+		glPointSize(5);
+		glBegin(GL_POINTS);
+		glColor3f(1,0,0);
+		glVertex3f(a.X,-a.Y,a.Z);
+		glVertex3f(b.X,-b.Y,b.Z);
+		glVertex3f(c.X,-c.Y,c.Z);
+		glVertex3f(d.X,-d.Y,d.Z);
+		glEnd();
+		glPointSize(1);
+	}
+	if(CTL)
+	{
+		glBegin(GL_LINE_STRIP);
+		glColor3f(0,0.5,0.5);
+		glVertex3f(a.X,-a.Y,a.Z);
+		glVertex3f(b.X,-b.Y,b.Z);
+		glVertex3f(c.X,-c.Y,c.Z);
+		glVertex3f(d.X,-d.Y,d.Z);
+		glEnd();
+	}
+	glBegin(GL_LINE_STRIP);
+	for(int i = 0; i < resolution; i++)
+	{
+		glColor3f(1,line[i].Y/2,line[i].Y*3/4);
+		glVertex3f(line[i].X,line[i].Y,line[i].Z);
+	}
+	glEnd();
+	if(CTP)
+	{
+		glPointSize(5);
+		glBegin(GL_POINTS);
+		glColor3f(1,0,0);
+		glVertex3f(a.X,-a.Y,-a.Z);
+		glVertex3f(b.X,-b.Y,-b.Z);
+		glVertex3f(c.X,-c.Y,-c.Z);
+		glVertex3f(d.X,-d.Y,-d.Z);
+		glEnd();
+		glPointSize(1);
+	}
+	if(CTL)
+	{
+		glBegin(GL_LINE_STRIP);
+		glColor3f(0,0.5,0.5);
+		glVertex3f(a.X,-a.Y,-a.Z);
+		glVertex3f(b.X,-b.Y,-b.Z);
+		glVertex3f(c.X,-c.Y,-c.Z);
+		glVertex3f(d.X,-d.Y,-d.Z);
+		glEnd();
+	}
+	glBegin(GL_LINE_STRIP);
+	for(int i = 0; i < resolution; i++)
+	{
+		glColor3f(1,line[i].Y/2,line[i].Y*3/4);
+		glVertex3f(line[i].X,line[i].Y,-line[i].Z);
+	}
+	glEnd();
+
+	glBegin(GL_LINE_STRIP);
+	glVertex3f(0,-1,0);
+	glVertex3f(0,-3,-2);
+	glVertex3f(0,-4,-1);
+	glEnd();
+
+	a.X = 0;
+	a.Y = -1;
+	a.Z = 3;
+
+	b.X = 0;
+	b.Y = 3;
+	b.Z = 3.5;
+
+	c.X = 0;
+	c.Y = 3;
+	c.Z = 8.5;
+
+	d.X = 0;
+	d.Y = -1;
+	d.Z = 9;
+	bezier(a,b,c,d,line,resolution);
+	if(CTP)
+	{
+		glPointSize(5);
+		glBegin(GL_POINTS);
+		glColor3f(1,0,0);
+		glVertex3f(a.X,a.Y,a.Z);
+		glVertex3f(b.X,b.Y,b.Z);
+		glVertex3f(c.X,c.Y,c.Z);
+		glVertex3f(d.X,d.Y,d.Z);
+		glEnd();
+		glPointSize(1);
+	}
+	if(CTL)
+	{
+		glBegin(GL_LINE_STRIP);
+		glColor3f(0,0.5,0.5);
+		glVertex3f(a.X,a.Y,a.Z);
+		glVertex3f(b.X,b.Y,b.Z);
+		glVertex3f(c.X,c.Y,c.Z);
+		glVertex3f(d.X,d.Y,d.Z);
+		glEnd();
+	}
+	glBegin(GL_LINE_STRIP);
+	for(int i = 0; i < resolution; i++)
+	{
+		glColor3f(1, 0.6,0.7);
+		glVertex3f(line[i].X,line[i].Y,line[i].Z);
+	}
+	glVertex3f(line[0].X,line[0].Y,line[0].Z);
+	glEnd();
+	if(CTP)
+	{
+		glPointSize(5);
+		glBegin(GL_POINTS);
+		glColor3f(1,0,0);
+		glVertex3f(a.X,a.Y,-a.Z);
+		glVertex3f(b.X,b.Y,-b.Z);
+		glVertex3f(c.X,c.Y,-c.Z);
+		glVertex3f(d.X,d.Y,-d.Z);
+		glEnd();
+		glPointSize(1);
+	}
+	if(CTL)
+	{
+		glBegin(GL_LINE_STRIP);
+		glColor3f(0,0.5,0.5);
+		glVertex3f(a.X,a.Y,-a.Z);
+		glVertex3f(b.X,b.Y,-b.Z);
+		glVertex3f(c.X,c.Y,-c.Z);
+		glVertex3f(d.X,d.Y,-d.Z);
+		glEnd();
+	}
+	glBegin(GL_LINE_STRIP);
+	for(int i = 0; i < resolution; i++)
+	{
+		glColor3f(1, 0.6,0.7);
+		glVertex3f(line[i].X,line[i].Y,-line[i].Z);
+	}
+	glVertex3f(line[0].X,line[0].Y,-line[0].Z);
+	glEnd();
+
+	a.X = 0;
+	a.Y = -1;
+	a.Z = 3;
+
+	b.X = 0;
+	b.Y = -5.5;
+	b.Z = 3.25;
+
+	c.X = 0;
+	c.Y = -5.5;
+	c.Z = 8.75;
+
+	d.X = 0;
+	d.Y = -0.8;
+	d.Z = 9;
+	bezier(a,b,c,d,line,resolution);
+	if(CTP)
+	{
+		glPointSize(5);
+		glBegin(GL_POINTS);
+		glColor3f(1,0,0);
+		glVertex3f(a.X,a.Y,a.Z);
+		glVertex3f(b.X,b.Y,b.Z);
+		glVertex3f(c.X,c.Y,c.Z);
+		glVertex3f(d.X,d.Y,d.Z);
+		glEnd();
+		glPointSize(1);
+	}
+	if(CTL)
+	{
+		glBegin(GL_LINE_STRIP);
+		glColor3f(0,0.5,0.5);
+		glVertex3f(a.X,a.Y,a.Z);
+		glVertex3f(b.X,b.Y,b.Z);
+		glVertex3f(c.X,c.Y,c.Z);
+		glVertex3f(d.X,d.Y,d.Z);
+		glEnd();
+	}
+	glBegin(GL_LINE_STRIP);
+	for(int i = 0; i < resolution; i++)
+	{
+		glColor3f(1,0.6,0.7);
+		glVertex3f(line[i].X,line[i].Y,line[i].Z);
+	}
+	glEnd();
+	if(CTP)
+	{
+		glPointSize(5);
+		glBegin(GL_POINTS);
+		glColor3f(1,0,0);
+		glVertex3f(a.X,a.Y,-a.Z);
+		glVertex3f(b.X,b.Y,-b.Z);
+		glVertex3f(c.X,c.Y,-c.Z);
+		glVertex3f(d.X,d.Y,-d.Z);
+		glEnd();
+		glPointSize(1);
+	}
+	if(CTL)
+	{
+		glBegin(GL_LINE_STRIP);
+		glColor3f(0,0.5,0.5);
+		glVertex3f(a.X,a.Y,-a.Z);
+		glVertex3f(b.X,b.Y,-b.Z);
+		glVertex3f(c.X,c.Y,-c.Z);
+		glVertex3f(d.X,d.Y,-d.Z);
+		glEnd();
+	}
+	glBegin(GL_LINE_STRIP);
+	for(int i = 0; i < resolution; i++)
+	{
+		glColor3f(1,0.6,0.7);
+		glVertex3f(line[i].X,line[i].Y,-line[i].Z);
+	}
+	glEnd();
+
+	a.X = 0;
+	a.Y = -4.5;
+	a.Z = 1;
+
+	b.X = 0;
+	b.Y = -5.5;
+	b.Z = 0.5;
+
+	c.X = 0;
+	c.Y = -5.5;
+	c.Z = -1.5;
+
+	d.X = 0;
+	d.Y = -5.5;
+	d.Z = -2;
+
+	bezier(a,b,c,d,line,resolution);
+	if(CTP)
+	{
+		glPointSize(5);
+		glBegin(GL_POINTS);
+		glColor3f(1,0,0);
+		glVertex3f(a.X,a.Y,a.Z);
+		glVertex3f(b.X,b.Y,b.Z);
+		glVertex3f(c.X,c.Y,c.Z);
+		glVertex3f(d.X,d.Y,d.Z);
+		glEnd();
+		glPointSize(1);
+	}
+	if(CTL)
+	{
+		glBegin(GL_LINE_STRIP);
+		glColor3f(0,0.5,0.5);
+		glVertex3f(a.X,a.Y,a.Z);
+		glVertex3f(b.X,b.Y,b.Z);
+		glVertex3f(c.X,c.Y,c.Z);
+		glVertex3f(d.X,d.Y,d.Z);
+		glEnd();
+	}
+	glBegin(GL_LINE_STRIP);
+	for(int i = 0; i < resolution; i++)
+	{
+		glColor3f(1,1-line[i].Y/2,1-line[i].Y*3/4);
+		glVertex3f(line[i].X,line[i].Y,line[i].Z);
+	}
+	glVertex3f(0,-4.5,-1.5);
+	
+	glEnd();
+
+	glBegin(GL_LINE_STRIP);
+	glVertex3f(0,-5.6,-1);
+	glVertex3f(0,-6.1,-0.5);
+	glEnd();
+	glPointSize(10);
+	glColor3f(1,1,1);
+	glBegin(GL_POINTS);
+	glVertex3f(0,-1.5,6);
+	glVertex3f(0,-1.5,-6);
+	glEnd();
+	glPointSize(1);
+
+	drawTongue(0,-5.75,-1.25,resolution);
 	if( DepthFightingOn != 0 )
 	{
 		glPushMatrix( );
@@ -399,7 +986,19 @@ Display( )
 			glCallList( BoxList );
 		glPopMatrix( );
 	}
-
+	drawHair(0.75,5,-12, -5  ,resolution);
+	drawHair(0.75,8,-9,   10  ,resolution);
+	drawHair(0.75,9.5,-6, 15  ,resolution);
+	drawHair(0.75,10.5,-3,20  ,resolution);
+	drawHair(0.75,10.75,0,25  ,resolution);
+	drawHair(0.75,10.5,3, 30  ,resolution);
+	drawHair(0.75,9.5,6,  35  ,resolution);
+	drawHair(0.75,8,9,    40  ,resolution);
+	drawHair(0.75,6,11,   45  ,resolution);
+	drawHair(0.75,4,13,   50 ,resolution);
+	drawEyebrow(0,3,4,1,resolution);
+	drawEyebrow(0,3,-4,-1,resolution);
+	glLineWidth(1);
 
 	// draw some gratuitous text that just rotates on top of the scene:
 
@@ -498,7 +1097,18 @@ DoDepthMenu( int id )
 	glutSetWindow( MainWindow );
 	glutPostRedisplay( );
 }
-
+void DoHandleMenu( int id )
+{
+	switch(id)
+	{
+	case 0:
+		CTP = !CTP;
+		break;
+	case 1:
+		CTL = !CTL;
+		break;
+	}
+}
 void DoCameraMenu( int id )
 {
 	if (id == 0)
@@ -665,6 +1275,10 @@ InitMenus( )
 	glutAddMenuEntry( "Orthographic",  ORTHO );
 	glutAddMenuEntry( "Perspective",   PERSP );
 
+	int handlemenu = glutCreateMenu( DoHandleMenu );
+	glutAddMenuEntry( "Toggle Controll points",  0 );
+	glutAddMenuEntry( "Toggle Controll lines",  1 );
+
 	int cameramenu = glutCreateMenu( DoCameraMenu );
 	glutAddMenuEntry( "Main",  0 );
 	glutAddMenuEntry( "Secondary 1",  1 );
@@ -672,6 +1286,7 @@ InitMenus( )
 
 	int mainmenu = glutCreateMenu( DoMainMenu );
 	glutAddSubMenu(   "Axes",          axesmenu);
+	glutAddSubMenu(   "Controll points",handlemenu);
 	glutAddSubMenu(   "Camera",        cameramenu);
 	glutAddSubMenu(   "Colors",        colormenu);
 	glutAddSubMenu(   "Depth Buffer",  depthbuffermenu);
@@ -776,73 +1391,10 @@ InitGraphics( )
 // (a display list is a way to store opengl commands in
 //  memory so that they can be played back efficiently at a later time
 //  with a call to glCallList( )
-void bezier(struct point one, struct point two, struct point three, struct point four, struct point * out, int res)
-{
-//	std::cout << one.X << ", "
-//		  << one.Y << ", "
-//		  << one.Z << ", "
-//	<< std::endl;
-	for(int i = 0; i < res; i++)
-	{
-		float t = (float)i * (float)1 / (float)res;
-		out[i].X = (pow((1-t),3)*one.X) +
-			(3*t*pow(1-t,2)*two.X) +
-			(3*pow(t,2)*(1-t)*three.X) +
-			(pow(t,3)*four.X);
-		out[i].Y = (pow((1-t),3)*one.Y) +
-			(3*t*pow(1-t,2)*two.Y) +
-			(3*pow(t,2)*(1-t)*three.Y) +
-			(pow(t,3)*four.Y);
-		out[i].Z = (pow((1-t),3)*one.Z) +
-			(3*t*pow(1-t,2)*two.Z) +
-			(3*pow(t,2)*(1-t)*three.Z) +
-			(pow(t,3)*four.Z);
-//		std::cout << out[i].X << ", "
-//			  << out[i].Y << ", "
-//			  << out[i].Z << ", "
-//		<< std::endl;
-	}
-}
+
 // Defining the time variable:
 // blade angle:
-void drawHair(int X, int Y, int Z,float angle, int resolution)
-{
-	struct point a;
-	struct point b;
-	struct point c;
-	struct point d;
-	struct point line[resolution];
-	a.X = 0;
-	a.Y = 0;
-	a.Z = 0;
 
-	b.X = 0;
-	b.Y = 1;
-	b.Z = -1;
-
-	c.X = 0;
-	c.Y = -0.5;
-	c.Z = -3.25;
-
-	d.X = 0;
-	d.Y = -2;
-	d.Z = -3;
-	bezier(a,b,c,d,line,resolution);
-	glPushMatrix();
-	glTranslatef(X,Y,Z);
-	glPushMatrix();
-	glRotatef(angle-30,1,0,0);
-	glBegin(GL_LINE_STRIP);
-	for(int i = 0; i < resolution; i++)
-	{
-		glColor3f(1,line[i].Y/2,line[i].Y*3/4);
-		glVertex3f(line[i].X,line[i].Y,line[i].Z);
-	}
-	glEnd();
-	glPopMatrix();
-	glPopMatrix();
-
-}
 void InitLists( )
 {
 	float dx = BOXSIZE / 2.f;
@@ -854,209 +1406,7 @@ void InitLists( )
 	BoxList = glGenLists( 1 );
 	glNewList( BoxList, GL_COMPILE );
 	// Random Objects placed here (polyStack)
-	// head
-
-	int resolution = 100;
-	struct point a;
-	a.X = 0;
-	a.Y = 1.5;
-	a.Z = -14.5;
-	struct point b;
-	b.X = 0;
-	b.Y = 14.5;
-	b.Z = -10;
-	struct point c;
-	c.X = 0;
-	c.Y = 14;
-	c.Z = 10;
-	struct point d;
-	d.X = 0;
-	d.Y = 1;
-	d.Z = 14.5;
 	
-	struct point line[resolution];
-	bezier(a,b,c,d,line,resolution);
-	glLineWidth( 3. );
-	glBegin(GL_LINE_STRIP);
-	for (int i = 0; i < resolution; i++)
-	{
-		glColor3f(1,line[i].Y/2,line[i].Y*3/4);
-		glVertex3f(line[i].X,line[i].Y,line[i].Z);
-	}
-
-	glEnd();
-	glBegin(GL_LINE_STRIP);
-	for (int i = 0; i < resolution; i++)
-	{
-		glColor3f(1,line[i].Y/2,line[i].Y*3/4);
-		glVertex3f(line[i].X,-line[i].Y,line[i].Z);
-	}
-	glEnd();
-
-	a.X = 0;
-	a.Y = 1;
-	a.Z = -14;
-
-	b.X = 0;
-	b.Y = 3;
-	b.Z = -17;
-
-	c.X = 0;
-	c.Y = -3;
-	c.Z = -17;
-
-	d.X = 0;
-	d.Y = -1;
-	d.Z = -14;
-
-	bezier(a,b,c,d,line,resolution);
-	glBegin(GL_LINE_STRIP);
-	for(int i = 0; i < resolution; i++)
-	{
-		glColor3f(1,line[i].Y/2,line[i].Y*3/4);
-		glVertex3f(line[i].X,line[i].Y,line[i].Z);
-	}
-	glEnd();
-	glBegin(GL_LINE_STRIP);
-	for(int i = 0; i < resolution; i++)
-	{
-		glColor3f(1,line[i].Y/2,line[i].Y*3/4);
-		glVertex3f(line[i].X,line[i].Y,-line[i].Z);
-	}
-	glEnd();
-
-	glColor3f(1,1,1);
-	glBegin(GL_LINE_STRIP);
-	glVertex3f(0,3,3);
-	glVertex3f(0,4,8);
-	glEnd();
-	glBegin(GL_LINE_STRIP);
-	glVertex3f(0,3,-3);
-	glVertex3f(0,5,-8);
-	glEnd();
-	glBegin(GL_LINE_STRIP);
-	glVertex3f(0,-1,0);
-	glVertex3f(0,-3,-2);
-	glVertex3f(0,-4,-1);
-	glEnd();
-
-	a.X = 0;
-	a.Y = -1;
-	a.Z = 3;
-
-	b.X = 0;
-	b.Y = 3;
-	b.Z = 3.5;
-
-	c.X = 0;
-	c.Y = 3;
-	c.Z = 8.5;
-
-	d.X = 0;
-	d.Y = -1;
-	d.Z = 9;
-	bezier(a,b,c,d,line,resolution);
-	glBegin(GL_LINE_STRIP);
-	for(int i = 0; i < resolution; i++)
-	{
-		glColor3f(1, 0.6,0.7);
-		glVertex3f(line[i].X,line[i].Y,line[i].Z);
-	}
-	glVertex3f(line[0].X,line[0].Y,line[0].Z);
-	glEnd();
-	glBegin(GL_LINE_STRIP);
-	for(int i = 0; i < resolution; i++)
-	{
-		glColor3f(1, 0.6,0.7);
-		glVertex3f(line[i].X,line[i].Y,-line[i].Z);
-	}
-	glVertex3f(line[0].X,line[0].Y,-line[0].Z);
-	glEnd();
-
-	a.X = 0;
-	a.Y = -1;
-	a.Z = 3;
-
-	b.X = 0;
-	b.Y = -5.5;
-	b.Z = 3.25;
-
-	c.X = 0;
-	c.Y = -5.5;
-	c.Z = 8.75;
-
-	d.X = 0;
-	d.Y = -0.8;
-	d.Z = 9;
-	bezier(a,b,c,d,line,resolution);
-	glBegin(GL_LINE_STRIP);
-	for(int i = 0; i < resolution; i++)
-	{
-		glColor3f(1,0.6,0.7);
-		glVertex3f(line[i].X,line[i].Y,line[i].Z);
-	}
-	glEnd();
-	glBegin(GL_LINE_STRIP);
-	for(int i = 0; i < resolution; i++)
-	{
-		glColor3f(1,0.6,0.7);
-		glVertex3f(line[i].X,line[i].Y,-line[i].Z);
-	}
-	glEnd();
-
-	a.X = 0;
-	a.Y = -4.5;
-	a.Z = 1;
-
-	b.X = 0;
-	b.Y = -5.5;
-	b.Z = 0.5;
-
-	c.X = 0;
-	c.Y = -5.5;
-	c.Z = -1.5;
-
-	d.X = 0;
-	d.Y = -5.5;
-	d.Z = -2;
-
-	bezier(a,b,c,d,line,resolution);
-
-	glBegin(GL_LINE_STRIP);
-	for(int i = 0; i < resolution; i++)
-	{
-		glColor3f(1,1-line[i].Y/2,1-line[i].Y*3/4);
-		glVertex3f(line[i].X,line[i].Y,line[i].Z);
-	}
-	glVertex3f(0,-4.5,-1.5);
-	
-	glEnd();
-
-	glBegin(GL_LINE_STRIP);
-	glVertex3f(0,-5.6,-1);
-	glVertex3f(0,-6.1,-0.5);
-	glEnd();
-	glPointSize(10);
-	glColor3f(1,1,1);
-	glBegin(GL_POINTS);
-	glVertex3f(0,-1.5,6);
-	glVertex3f(0,-1.5,-6);
-	glEnd();
-	glPointSize(1);
-
-
-	drawHair(0,6,-12, 5  ,resolution);
-	drawHair(0,9,-9,  10  ,resolution);
-	drawHair(0,10,-6,  15  ,resolution);
-	drawHair(0,11,-3,  20  ,resolution);
-	drawHair(0,11,0,   25  ,resolution);
-	drawHair(0,11,3 ,  30  ,resolution);
-	drawHair(0,10,6,   35  ,resolution);
-	drawHair(0,9,9,   40  ,resolution);
-	drawHair(0,7,11,  45  ,resolution);
-	drawHair(0,5,13,  50 ,resolution);
-
-	glLineWidth( 1. );
 	glEndList( );
 
 
@@ -1089,6 +1439,11 @@ Keyboard( unsigned char c, int x, int y )
 		case 'p':
 		case 'P':
 			WhichProjection = PERSP;
+			DoHandleMenu(0);
+			break;
+		case 'l':
+		case 'L':
+			DoHandleMenu(1);
 			break;
 		case 'c':
 		case 'C':

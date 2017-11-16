@@ -1,0 +1,21 @@
+Ray casting:
+- Lighting could be done if we draw another line from object to the light source
+- We can generate mirrors this way
+- Transparency and refraction snell's law of reflaction
+ - Lenses
+- Could be sped up
+
+- At^2 + bt + c  = 0
+- 2 real numvers
+- 1 real -> they are same
+- 2 complex numbers
+
+Sub space scattering
+- light does not got in and bounce out
+- light goes in but bounces back out somewhere else
+
+Animation
+- Keyframes
+ - Keyframes: you deploy major checkpoints (you do this)
+ - in-betweening: fill in between key framse (computer does this)
+- 
