@@ -1,0 +1,15 @@
+Animation:
+- Forward Kinematics
+- Inverse kinematics (IK)
+- Particle systems
+ - RNG
+ - Emit
+ - Display
+ - Update
+- physics
+ - Friction
+ - Spring
+ - gravity
+ - mass
+ - etc
+- 

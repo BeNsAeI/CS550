@@ -1,0 +1,23 @@
+- STL: Object must only be triangles
+- STL: Legal Solid - Two manafold - Water tight - Definite inside and outside
+- STL: Compuned objects need to be merged (Boolean Union)
+- STL: No cracks  in the model - Every edge should be bound to only 2 triangles
+- STL: Faces - Edges + Vertecies - Inner Edges loops = 2(Bodies - Genus(number of through holes))
+- STL: Handle Overhangs
+
+StereoGraphics:
+- Works on the basis that two eyes see things slightly differently
+
+Cyclops Model:
+- Rotate the scene slightly to fake what other eyes see
+- Vertical Paralex:
+ - Problem with this is that it is moving points further and others closer
+ - This means some points look bigger and some other look smaller
+ - This means the view doesn't work in perspective
+- Lets do it for Ortho only:
+ - This theoretically solves the problem, but brain has learned to counter this
+ - it makes it look larger than it supposed to
+- So we ditch the cyclops model
+
+Side by Side:
+

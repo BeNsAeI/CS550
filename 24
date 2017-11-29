@@ -1,0 +1,15 @@
+Animation continues:
+- Functional animation (fake physics)
+ -   ..    . 
+ - m x + c x  + kx = 0
+ - add spring to go from a to b (spring)
+ - add a repultion (physics force maybe magnet)
+- MoCap: motion capture
+
+___
+
+3D printing:
+- Manufacturing has been mostly subtractive (milling, CNC, etc)
+- 3D printing is Aditive, we add material to make things
+- Format is STerio Lethography (STL) (based on Triangular polyguns)
+
